@@ -67,7 +67,7 @@ def login_user(email, password):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     hashed_password = hash_password(password)
-    cursor.execute("SELECT id FROM users WHERE email=? AND passwords=?", (email, hashed_password)
+    cursor.execute("SELECT id FROM users WHERE email=? AND passwords=?", (email, hashed_password))
     user = cursor.fetchone()
     conn.close()
     return user[0] if user else None
