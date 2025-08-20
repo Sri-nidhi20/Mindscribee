@@ -53,7 +53,7 @@ def register_user(email, password):
     cursor = conn.cursor()
     try:
         hashed_password = hash_password(password)
-        cursor.execute("INSERT INTO users (email, password) Values (?, ?)", (email, hashed_password)
+        cursor.execute("INSERT INTO users (email, password) Values (?, ?)", (email, hashed_password))
         conn.commit()
         user_id = cursor.lastrowid
         conn.close()
