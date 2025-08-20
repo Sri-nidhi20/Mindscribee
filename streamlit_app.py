@@ -60,7 +60,7 @@ def register_user(email, password):
         return user_id, None
     except sqlite3.IntegrityError:
         conn.close()
-        return None. "An account with this email already exists."
+        return None, "An account with this email already exists."
 
 def login_user(email, password):
     """Logs in a user and returns their user ID if credentials are correct."""
