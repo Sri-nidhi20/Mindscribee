@@ -10,19 +10,19 @@ Whether you're seeking inspiration, humour, or perspective, MindScribe makes jou
 ----------------------------------------------------------------------------------
 
 # 🚀 Features
--> 📝 Journal Entry Input -- write your thoughts, ideas or reflections.
--> 🤖 AI-Powered respponses - Get a personalized response in creative formats (poem, quote, story, or play).
--> 🌈 Uplifting & Motivational - AI adapts to your mood and offers supportive perspectives.
--> 🔐 Login & user Accounts - secure sign-up and login with hashed passwords.
--> 🎨 Streamlit UI - clean, interactive, and easy-to-use interface.
+1.  📝 Journal Entry Input -- write your thoughts, ideas or reflections.
+2.  🤖 AI-Powered respponses - Get a personalized response in creative formats (poem, quote, story, or play).
+3.  🌈 Uplifting & Motivational - AI adapts to your mood and offers supportive perspectives.
+4.  🔐 Login & user Accounts - secure sign-up and login with hashed passwords.
+5.  🎨 Streamlit UI - clean, interactive, and easy-to-use interface.
 
 --------------------------------------------------------------------------------
 
 # 🛠️ Tech Stack
--> Frontend/UI : Streamlit
--> Backend : Python
--> Database : SQLite
--> AI Model : Gemini (Google Generative AI API)
+1. Frontend/UI : Streamlit
+2. Backend : Python
+3. Database : SQLite
+4. AI Model : Gemini (Google Generative AI API)
 
 -------------------------------------------------------------------------------
 
