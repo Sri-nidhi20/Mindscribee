@@ -361,7 +361,7 @@ def show_journal_page():
     mood = st.selectbox("How are you feeling ?", ["Happy", "Sad", "Anxious", "Neutral", "Excited"])
     if st.button("Save Entry", use_container_width = True):
         if journal_entry:
-            with st.spinner("Generating your personalized AI insight.....'):
+            with st.spinner('Generating your personalized AI insight.....'):
                 ai_response = generate_ai_response(journal_entry)
             save_entry(st.session_state.user_id, journal_entry, mood, ai_response)
             st.session_state.entry_saved = True
