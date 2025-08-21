@@ -128,7 +128,7 @@ def generate_ai_response(entry_text):
     ]
 
     prompt = f"""
-    You are an AI-powered journal assistant. Your task is to provide a creative and uplifting response to a user's journal entry. The response should be a poem, a short humorous dramatic story, a motivational quote, or a short one-act play. The tone should be based on the content of the journal entry. Ensure the response is personalized and directly relates to the user's thoughts.
+    You are an AI-powered journal assistant. Your task is to provide a creative and uplifting response to a user's journal entry. The response should be a poem, a short cringe humorous dramatic story, a motivational quote, or a short one-act play. The tone should be based on the content of the journal entry. Ensure the response is personalized and directly relates to the user's thoughts.
 
     Here is the journal entry:
     \"\"\"{entry_text}\"\"\"
@@ -278,6 +278,12 @@ def show_login_page():
 def show_set_security_key_page():
     """Renders the security key setup UI."""
     logo_image_path = "MindScribe_logo.jpg"
+    try:
+        st.image(logo_iamge_path, width=150)
+    except FileNotFoundError:
+        st.markdown('<div style="color: #FFD700; font-size: 3em; font-weight: bold; text-align: center: margin-bottom: 1em;"> MindScribe </div>', unsafe_allow_html=True)
+        st.warning(f"Logo file '{logo_image_path}' not found. Using fallback text.")
+        
     st.title("Set a Security Key")
     st.write("Optional: Add a 4-digit key to project your journal entries.")
     
@@ -298,6 +304,13 @@ def show_set_security_key_page():
 
 def show_security_check_page():
     """Renders the security key check UI."""
+    logo_image_path = "MindScribe_logo.jpg"
+    try:
+        st.image(logo_image_path, width=150)
+    except FileNotFoundError:
+        st.markdown('<div style="color: #FFD700; font-size: 3em; font-weight: bold; text-align: center; margin-bottom: 1em;">MindScribe</div>', unsafe_allow_html=True)
+        st.warning(f"Logo file '{logo_image_path}' not found. Using fallback text.")
+
     st.title("Enter your Security Key")
     st.write("Please enter your personal key to unlock you journal.")
     
@@ -314,12 +327,59 @@ def show_security_check_page():
 
 def show_welcome_page():
     """A simple welcome page to show after successful login."""
-    st.title("Welcome!! 🥳🎉")
-    st.write("You are logged in and ready to start your journey..")
-    st.write("We've completed the database and authentication setup!")
-    st.write("We can now move on to the next steps of building the journaling interface and AI integration.")
+    logo_image_path = "MindScribe_logo.jpg"
+    try:
+        st.image(logo_image_path, width=150)
+    except FileNotFoundError:
+        st.markdown('<div style="color: #FFD700; font-size: 3em; font-weight: bold; text-align: center; margin-bottom: 1em;">MindScribe</div>', unsafe_allow_html=True)
+        st.warning(f"Logo file '{logo_image_path}' not found. Using fallback text.")
+    
+    st.markdown(
+        """
+        <div class = "welcome-container">
+            <h1 class = "welcome-title"> Welcome to MindScribe</h1>
+            <p class = "welcome-subtitle"> Your new ultimate AI-powered journal. </p>
+        </div>
+        """,
+        unsafe_allow_html = True
+    )
+
     st.write(f"Your User ID is: **{st.session_state.user_id}**")
     st.button("Start Journaling", use_container_width = True, on_click = lambda: st.session_state.update(page="journal"))
+
+def show_journal_page():
+    """Renders the main journaling page with AI sidebar."""
+    logo_image_path = "MindScribe_logo.jpg"
+    try:
+        st.image(logo_image_path, width=150)
+    except FileNotFoundError:
+        st.markdown('<div style="color: #FFD700; font-size: 3em; font-weight: bold; text-align: center; margin-bottom: 1em;">MindScribe</div>', unsafe_allow_html=True)
+        st.warning(f"Logo file '{logo_image_path}' not found. Using fallback text.")
+    st.title("Journal Entry")
+    st.write("Write about your day and we'll help you reflect on it.")
+    journal_entry = st.text_area("What's on your mind today?", height=300)
+    mood = st.selectbox("How are you feeling ?", ["Happy", "Sad", "Anxious", "Neutral", "Excited"])
+    if st.button("Save Entry", use_container_width = True):
+        if journal_entry:
+            with st.spinner("Generating your personalized AI insight.....'):
+                ai_response = generate_ai_response(journal_entry)
+            save_entry(st.session_state.user_id, journal_entry, mood, ai_response)
+            st.session_state.entry_saved = True
+            st.success("Entry Saved!!")
+            st.rerun()
+        else:
+            st.session_state.entry_saved = False
+            st.warning("Please write something before saving.")
+    #Display the AI sidebar if an was just saved
+    if st.session_state.entry_saved:
+        last_entry = get_last_entry_and_ai_response(st.session_state.user_id)
+        if last_entry and last_entry[1]:
+            with st.sidebar:
+                st.markdown('<div style ="color: #FFd700; font-size: 1.5em; text-align: center;"> Your AI Insight </div>', unsafe_allow_html = True)
+                st.markdown(f'<div style = "text-align: center; font-style: italic;"> {last_entry[1]}</div>', unsafe_allow_html = True)
+                st.markdown("---")
+                st.markdown('<div style = "text-align: center; color: white; font-weight: bold;"> Enjoy your journey!!</div>', unsafe_allow_html=True)
+                
 
 def main_app():
     """Handles page routing based on session state."""
@@ -331,7 +391,6 @@ def main_app():
         show_security_check_page()
     elif st.session_state["page"] == "welcome":
         show_welcome_page()
-    #the 'journal' page will be addede in the next step
-    #elif st.session_state.page == "journal":
-    #    show_journal_page()
+    elif st.session_state.page == "journal":
+        show_journal_page()
 main_app()
