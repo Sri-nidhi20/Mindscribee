@@ -188,7 +188,7 @@ def main_app():
         show_set_security_key_page()
     elif st.session_state.page == "security_check":
         show_security_check_page()
-    elif st.session_state_page == "welcome":
+    elif st.session_state["page"] == "welcome":
         show_welcome_page()
     #the 'journal' page will be addede in the next step
     #elif st.session_state.page == "journal":
