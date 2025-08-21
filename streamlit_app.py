@@ -100,7 +100,7 @@ def get_last_entry_and_ai_response(user_id):
     """Fetches the last journal entry and its AI response for a given user."""
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    cursor.execute("SELECT content, ai_response FROM entries WHERE eser_id=? ORDER BY id  DESC LIMIT 1", (user_id, ))
+    cursor.execute("SELECT content, ai_response FROM entries WHERE user_id=? ORDER BY id  DESC LIMIT 1", (user_id, ))
     entry = cursor.fetchone()
     conn.close()
     return entry
