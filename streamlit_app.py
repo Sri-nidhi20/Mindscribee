@@ -1,9 +1,16 @@
 import streamlit as st
 import sqlite3
 import hashlib
+import datetime
+import requests
+import json
+import time
+import random
+import textwrap
 
 #--- DataBase & Authentication Configuration ---
 DB_PATH = "journal.db"
+API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent"
 
 #--- DataBase Functions ---
 def init_db():
@@ -89,8 +96,95 @@ def get_user_passcode(user_id):
     conn.close()
     return passcode[0] if passcode else None
 
-#---Streamlit APP UI & Logic ---
+def get_last_entry_and_ai_response(user_id):
+    """Fetches the last journal entry and its AI response for a given user."""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT content, ai_response FROM entries WHERE eser_id=? ORDER BY id  DESC LIMIT 1", (user_id, ))
+    entry = cursor.fetchone()
+    conn.close()
+    return entry
 
+def save_entry(user_id, content, mood, ai_response):
+    """saves a new journal entry amd the AI response for the current user."""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    date_str = datetime.date.today().isoformat()
+    cursor.execute("INSERT INTO entries (user_id, date, content, mood, ai_response) VALUES (?, ?, ?, ?, ?)", (user_id, date_str, content, mood, ai_response))
+    conn.commit()
+    conn.close()
+    
+#--- Gemini API Functions ---
+def generate_ai_response(entry_text):
+    """
+    Generates a creative, personalized AI response based on the journal entry.
+    This function uses the Gemini API. If the API fails, it provides a fallback message.
+    """
+    fallback_responses = [
+        "Your thoughts are a garden, adn every entry is a seed. Keep nurturing them, and they will blossom into something beautiful.",
+        "Remember that even the most beautiful stories have chapters of quiet moments. Your journey is uniquelyyours, and every page is worth writing.",
+        "Take a deep breath and know that you are capable of incredible things. This moment is just a step on your path.",
+        "Every day is a fresh start, a blank page waiting for your words. Embrace the new beginning."
+    ]
+
+    prompt = f"""
+    You are an AI-powered journal assistant. Your task is to provide a creative and uplifting response to a user's journal entry. The response should be a poem, a short humorous dramatic story, a motivational quote, or a short one-act play. The tone should be based on the content of the journal entry. Ensure the response is personalized and directly relates to the user's thoughts.
+
+    Here is the journal entry:
+    \"\"\"{entry_text}\"\"\"
+
+    Choose a creative format and provide a response that aims to uplift, inspire or offer a new perspective.
+    """
+    prompt = textwrap.dedent(prompt)
+
+    payload = {
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {
+            "temperature": 0.8,
+            "maxOutputTokens": 200,
+        },
+    }
+
+    headers = {
+        "Content-Type": "application/json",
+    }
+
+    api_key = "" #This will be provided by the environmenr
+
+    retries = 0
+    max_rettries = 3
+    while retries < max_retries:
+        try:
+            response = requests.post(f"{API_URL}?key={api_key}", headers=headers, data = json.dumps(payload))
+            response.raise_for_status()
+            response_json = response.json()
+            #extract the AI's generated text
+            if response_json and 'candidates' in response_json an d len(response_json['candidates']) > 0:
+                ai_text = response_json['candidates'][0]['content']['parts'][0]['text']
+                return ai_text
+            else:
+                return random.choice(fallback_responses)
+        except requests.exceptions.HTTPError as errh:
+            st.error(f"HTTP Error: {errh}")
+            break
+        except requests.exceptions.ConnectionError as errc:
+            st.error(f"Error Connecting: {errc}")
+            break
+        except requests.exceptions.Timeout as errt:
+            st.error(f"Timeout Error: {errt}")
+            break
+        except requests.exceptions.RequestException as err:
+            st.error(f"An unexpected error occurred: {err}")
+            break
+        except Exception as e:
+            st.error(f"An Error occurred: {e}")
+            break
+        retries += 1
+        time.sleep(2 ** retries) #exponential backoff
+    return random.choice(fallback_responses)
+
+#---Streamlit APP UI & Logic ---
+        
 #Initialize the database and session state
 init_db()
 if "logged_in" not in st.session_state:
@@ -100,9 +194,55 @@ if "logged_in" not in st.session_state:
     st.session_state.security_checked = False
     st.session_state.error_message = ""
     st.session_state.is_registering = False
+    st.session_state.entry_saved = False 
+
+#Custom CSS for background, text color, and logo
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background-color: #0b5844;
+        color: white;
+    }
+    .welcome-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 2em;
+    }
+    .welcome-title {
+        font-size: 2.5em;
+        font-weight: bold;
+        margin-bottom: 1em;
+    }
+    .welcome-subtitle {
+        font-size: 1.2em;
+        margin-bottom: 1em;
+    }
+    .stButton > button {
+        background-color: #FFD700;
+        color: #0b5844;
+        font-weight: bold;
+        border-radius: 10px;
+        border: none;
+        padding: 10px 20px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+    
 
 def show_login_page():
     """Renders the login and registration UI."""
+    logo_image_path = "MindScribe_logo.jpg"
+    try:
+        st.image(logo_image_path, width=150)
+    except FileNotFoundError:
+        st.markdown('<div style="color: #FFD700; font-size: 3em; font-weight: bold; text-align: center; margin-bottom: 1em;"> MindScribe </div>', unsafe_allow_html=True)
+        st.warning(f"Logo file '{logo_image_path}' not found. using fallback text.")
+        
     st.title("Welcome to MindScribe")
     st.subheader("Your AI-Powered Journal")
     st.write("Login or create a new account to begin.")
@@ -137,6 +277,7 @@ def show_login_page():
 
 def show_set_security_key_page():
     """Renders the security key setup UI."""
+    logo_image_path = "MindScribe_logo.jpg"
     st.title("Set a Security Key")
     st.write("Optional: Add a 4-digit key to project your journal entries.")
     
