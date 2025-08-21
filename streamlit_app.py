@@ -152,7 +152,7 @@ def generate_ai_response(entry_text):
     api_key = "" #This will be provided by the environmenr
 
     retries = 0
-    max_rettries = 3
+    max_retries = 3
     while retries < max_retries:
         try:
             response = requests.post(f"{API_URL}?key={api_key}", headers=headers, data = json.dumps(payload))
