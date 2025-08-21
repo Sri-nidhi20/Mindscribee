@@ -159,7 +159,7 @@ def generate_ai_response(entry_text):
             response.raise_for_status()
             response_json = response.json()
             #extract the AI's generated text
-            if response_json and 'candidates' in response_json an d len(response_json['candidates']) > 0:
+            if response_json and 'candidates' in response_json and len(response_json['candidates']) > 0:
                 ai_text = response_json['candidates'][0]['content']['parts'][0]['text']
                 return ai_text
             else:
