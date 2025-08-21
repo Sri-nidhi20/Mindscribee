@@ -121,7 +121,7 @@ def show_login_page():
                     st.session_state.page = "security_check"
                 else:
                     st.session_state.page = "welcome"
-                st.experimental_rerun()
+                st.rerun()
             else:
                 st.error("Invalid email or password.")
     with col2:
@@ -131,7 +131,7 @@ def show_login_page():
                 st.success("Account created! Please set a security key.")
                 st.session_state.user_id = user_id
                 st.session_state.page = "set_security_key"
-                st.experimental_rerun()
+                st.rerun()
             else:
                 st.error(error)
 
@@ -147,13 +147,13 @@ def show_set_security_key_page():
             set_security_key(st.session_state.user_id, passcode)
             st.session_state.page = "welcome"
             st.success("Security key set successfully!")
-            st.experimental_rerun()
+            st.rerun()
         else:
             st.error("Please enter a 4-digit numeric key.")
     
     if st.button("Skip for now"):
         st.session_state.page = "welcome"
-        st.experimental_rerun()
+        st.rerun()
 
 def show_security_check_page():
     """Renders the security key check UI."""
@@ -167,7 +167,7 @@ def show_security_check_page():
         if passcode_check == stored_passcode:
             st.session_state.page = "welcome"
             st.session_state.security_checked = True
-            st.experimental_rerun()
+            st.rerun()
         else:
             st.error("Incorrect security key. Please try again.")
 
