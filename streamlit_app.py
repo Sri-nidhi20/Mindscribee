@@ -8,7 +8,7 @@ import time
 import random
 import textwrap
 import os
-from openai import openai
+from openai import OpenAI
 
 #--- DataBase & Authentication Configuration ---
 DB_PATH = "journal.db"
@@ -194,7 +194,7 @@ def get_entry_dates(user_id):
     conn.close()
     return dates
 
-openai.api_key = st.secrets["OPENAI_API_KEY"]  
+OpenAI.api_key = st.secrets["OPENAI_API_KEY"]  
 #--- OpenAI API Functions ---
 def generate_ai_response(entry_text):
     """
