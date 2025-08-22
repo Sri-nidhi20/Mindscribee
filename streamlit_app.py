@@ -331,6 +331,37 @@ st.markdown(
         z-index: 1000;
         text-align: center;
     }
+    .calendar {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap:5px;
+        width: 100%;
+        max-width: 600px;
+        margin: auto;
+    }
+    .calendar-day {
+        background-color: #0d4a3e;
+        color: white;
+        padding: 10px;
+        border-radius: 8px;
+        text-align: center;
+    }
+    .calendar-header {
+        grid-column: 1 / -1;
+        text-align: center;
+        font-size: 1.5em;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+    .day-name {
+        font-weight: bold;
+        color: #FFD700;
+    }
+    .journaled-day {
+        background-color: #FFD700;
+        color: #0b5844;
+        font-weight: bold;
+    }
     </style>
     """,
     unsafe_allow_html=True
@@ -503,8 +534,24 @@ def show_home_page():
     st.subheader("Your Calendar")
     entry_dates = get_entry_dates (st.session_state.user_id)
     if entry_dates:
-        st.write("Dates you've journaled:")
-        st.write(",".join(entry_dates))
+        entry_dates_dt = [datetime.date.fromisoformat(d) for d in entry_dates]
+        today = datetime.date.today()
+        first_day = today.replace(day=1)
+        days_in_month = (today.replace(month=today.month % 12 + 1, day=1) - datetime.timedelta(days=1)).day
+        st.markdown ('<div class="calendar">', unsafe_allow_html = True)
+        weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        for day_name in weekdays:
+            st.markdown(f'<div class = "day-name}">{day_name}</div>', unsafe_allow_html = True)
+        start_weekday = first_day.weekday()
+        for _ in range(start_weekday):
+            st.markdown('<div class="calendar-day"> </div>', unsafe_allow_html = True)
+        for day in range(1, days_in_month + 1):
+            current_date = first_day.replace(day=day)
+            if current_date in entry_dates_dt:
+                st.markdown(f'<div class = "calendar-day journaled-day"> {day} </div>', unsafe_allow_html = True)
+            else:
+                st.markdown(f'<div class = "calendar-day"> {day} </div>', unsafe_allow_html = True)
+        st.amrkdown('</div>', unsafe_allow_html = True)
     else:
         st.info("Start writing to see your calendar history!!")
     st.markdown("---")
