@@ -447,7 +447,7 @@ def show_welcome_page():
     compliment = random.choice(slogans)
     
     st.markdown(
-        """
+        f"""
         <div class = "welcome-container">
             <h1 class = "welcome-title"> Welcome, {username}!! 💖</h1>
             <p class = "welcome-subtitle"> {compliment}</p>
