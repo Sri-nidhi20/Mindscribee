@@ -52,6 +52,13 @@ def init_db():
     conn.commit()
     conn.close()
 
+if "ai_response" not in st.session_state:
+    st.session_state.ai_response = ""
+
+if "entry_saved" not in st.session_state:
+    st.session_state.entry_saved = False
+
+
 def hash_password(password):
     """Hashes a password using SHA-256 for secure storage."""
     return hashlib.sha256(password.encode()).hexdigest()
