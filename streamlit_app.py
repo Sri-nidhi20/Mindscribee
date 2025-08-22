@@ -8,7 +8,7 @@ import time
 import random
 import textwrap
 import os
-from openai import OpenAI
+from openai import openai
 
 #--- DataBase & Authentication Configuration ---
 DB_PATH = "journal.db"
@@ -142,7 +142,7 @@ def update_streak(user_id, current_date_str):
     #check for existing streak
     cursor.execute("SELECT streak_count, last_entry_date FROM streaks WHERE user_id=?", (user_id,))
     streak_data = cursor.fetchone()
-    if streak_date:
+    if streak_data:
         streak_count, last_entry_date_str = streak_data
         if last_entry_date_str:
             last_entry_date = datetime.date.fromisofformat(last_entry_date_str)
@@ -194,7 +194,7 @@ def get_entry_dates(user_id):
     conn.close()
     return dates
 
-OpenAI.api_key = st.secrets["OPENAI_API_KEY"]  
+openai.api_key = st.secrets["OPENAI_API_KEY"]  
 #--- OpenAI API Functions ---
 def generate_ai_response(entry_text):
     """
