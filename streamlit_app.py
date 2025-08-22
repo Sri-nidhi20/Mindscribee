@@ -142,7 +142,7 @@ def update_streak(user_id, current_date_str):
     #check for existing streak
     cursor.execute("SELECT streak_count, last_entry_date FROM streaks WHERE user_id=?", (user_id,))
     streak_date = cursor.fetchone()
-    if streak_data:
+    if streak:
         streak_count, last_entry_date_str = streak_data
         if last_entry_date_str:
             last_entry_date = datetime.date.fromisofformat(last_entry_date_str)
