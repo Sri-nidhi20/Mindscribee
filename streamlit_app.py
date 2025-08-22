@@ -194,7 +194,7 @@ def get_entry_dates(user_id):
     conn.close()
     return dates
 
-    
+openai.api_key = st.secrets["OPENAI_API_KEY"]  
 #--- OpenAI API Functions ---
 def generate_ai_response(entry_text):
     """
@@ -207,8 +207,6 @@ def generate_ai_response(entry_text):
         "Take a deep breath and know that you are capable of incredible things. This moment is just a step on your path.",
         "Every day is a fresh start, a blank page waiting for your words. Embrace the new beginning."
     ]
-
-    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
     prompt = f"""
     You are MindScribe - an AI-powered journal assistant.
@@ -232,7 +230,7 @@ def generate_ai_response(entry_text):
     prompt = textwrap.dedent(prompt)
 
     try:
-        response = client.chat.completions.create(
+        response = openai.ChatCompletion.create(
             model="gpt-4o",
             messages=[
                 {"role": "system", "content": "You are a creative, empathetic AI journal assistant."},
