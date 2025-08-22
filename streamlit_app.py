@@ -194,7 +194,7 @@ def get_entry_dates(user_id):
     conn.close()
     return dates
 
-openai.api_key = st.secrets["OPENAI_API_KEY"]  
+OpenAI.api_key = st.secrets["OPENAI_API_KEY"]  
 #--- OpenAI API Functions ---
 def generate_ai_response(entry_text):
     """
