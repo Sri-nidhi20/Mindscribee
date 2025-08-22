@@ -564,9 +564,9 @@ def show_journal_page():
                 f"""
                 <div class = "popup-container">
                     <h3> Your AI Insight </h3>
-                    <p style="font-style: italic;"> {response} </p>
+                    <p style="font-style: italic;"> {st.session_state.ai_response} </p>
                 </div>
-                """.format(response=st.session_state.ai_response),
+                """,
                 unsafe_allow_html  = True
             )
             st.session_state.entry_saved = False
