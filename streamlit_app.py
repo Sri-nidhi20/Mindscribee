@@ -279,7 +279,7 @@ def show_set_security_key_page():
     """Renders the security key setup UI."""
     logo_image_path = "MindScribe_logo.jpg"
     try:
-        st.image(logo_iamge_path, width=150)
+        st.image(logo_image_path, width=150)
     except FileNotFoundError:
         st.markdown('<div style="color: #FFD700; font-size: 3em; font-weight: bold; text-align: center: margin-bottom: 1em;"> MindScribe </div>', unsafe_allow_html=True)
         st.warning(f"Logo file '{logo_image_path}' not found. Using fallback text.")
