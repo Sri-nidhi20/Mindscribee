@@ -566,7 +566,7 @@ def show_journal_page():
                     <h3> Your AI Insight </h3>
                     <p style="font-style: italic;"> {response} </p>
                 </div>
-                """,
+                """.format(response=st.session_state.ai_response),
                 unsafe_allow_html  = True
             )
             st.session_state.entry_saved = False
