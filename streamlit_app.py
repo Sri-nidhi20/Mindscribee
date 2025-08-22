@@ -514,7 +514,7 @@ def show_home_page():
     if entries:
         for entry in entries:
             entry_id, date_str, content, mood, ai_response = entry
-            with st.expander(f"**{date_sstr}** - Mood: {mood}"):
+            with st.expander(f"**{date_str}** - Mood: {mood}"):
                 st.write(f"**My thoughts:**")
                 st.write(content)
                 st.write("---")
