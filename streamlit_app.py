@@ -549,7 +549,7 @@ def show_journal_page():
                     ai_response = generate_ai_response(journal_entry)
                 save_entry(st.session_state.user_id, journal_entry, mood, ai_response)
                 st.session_state.entry_saved = True
-                st.session_state.ai_resonse = ai_response
+                st.session_state.ai_response = ai_response
                 st.rerun()
             else:
                 st.session_state.entry_saved = False
