@@ -541,7 +541,7 @@ def show_home_page():
         st.markdown ('<div class="calendar">', unsafe_allow_html = True)
         weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         for day_name in weekdays:
-            st.markdown(f'<div class = "day-name}">{day_name}</div>', unsafe_allow_html = True)
+            st.markdown(f'<div class = "day-name">{day_name}</div>', unsafe_allow_html = True)
         start_weekday = first_day.weekday()
         for _ in range(start_weekday):
             st.markdown('<div class="calendar-day"> </div>', unsafe_allow_html = True)
