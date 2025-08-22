@@ -551,7 +551,7 @@ def show_home_page():
                 st.markdown(f'<div class = "calendar-day journaled-day"> {day} </div>', unsafe_allow_html = True)
             else:
                 st.markdown(f'<div class = "calendar-day"> {day} </div>', unsafe_allow_html = True)
-        st.amrkdown('</div>', unsafe_allow_html = True)
+        st.markdown('</div>', unsafe_allow_html = True)
     else:
         st.info("Start writing to see your calendar history!!")
     st.markdown("---")
