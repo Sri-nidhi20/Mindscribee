@@ -141,8 +141,8 @@ def update_streak(user_id, current_date_str):
     current_date = datetime.date.fromisoformat(current_date_str)
     #check for existing streak
     cursor.execute("SELECT streak_count, last_entry_date FROM streaks WHERE user_id=?", (user_id,))
-    streak_date = cursor.fetchone()
-    if streak:
+    streak_data = cursor.fetchone()
+    if streak_date:
         streak_count, last_entry_date_str = streak_data
         if last_entry_date_str:
             last_entry_date = datetime.date.fromisofformat(last_entry_date_str)
@@ -180,7 +180,7 @@ def get_all_entries(user_id):
     """Fetches all journal entries for a user, ordered by date."""
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    cursor.execute("SELECT id, date, content, mood, ai_response FROM entries WHEREuser_id=? ORDER BY date DESC", (user_id,))
+    cursor.execute("SELECT id, date, content, mood, ai_response FROM entries WHERE user_id=? ORDER BY date DESC", (user_id,))
     entries = cursor.fetchall()
     conn.close()
     return entries
@@ -561,12 +561,12 @@ def show_journal_page():
     if st.session_state.entry_saved:
         with st.container():
             st.markdown(
-                """
+                f"""
                 <div class = "popup-container">
                     <h3> Your AI Insight </h3>
                     <p style="font-style: italic;"> {response} </p>
                 </div>
-                """.format(response=st.session_state.ai_response),
+                """,
                 unsafe_allow_html  = True
             )
             st.session_state.entry_saved = False
