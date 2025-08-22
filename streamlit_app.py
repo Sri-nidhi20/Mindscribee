@@ -509,16 +509,17 @@ def show_home_page():
     if entries:
         for entry in entries:
             entry_id, date_str, content, mood, ai_response = entry
-            with st.expander(f"**My thoughts:**")
-            st.write(content)
-            st.write("---")
-            st.write(f"**Your AI Insight:**")
-            st.write(ai_response)
-            #delete button
-            if st.button("delete this entry", key=f"delete_{entry_id}"):
-                delete_entry(entry_id)
-                st.success("Entry deleted successfully!! 🎉")
-                st.rerun()
+            with st.expander(f"**{date_sstr}** - Mood: {mood}"):
+                st.write(f"**My thoughts:**")
+                st.write(content)
+                st.write("---")
+                st.write(f"**Your AI Insight:**")
+                st.write(ai_response)
+                #delete button
+                if st.button("delete this entry", key=f"delete_{entry_id}"):
+                    delete_entry(entry_id)
+                    st.success("Entry deleted successfully!! 🎉")
+                    st.rerun()
     else:
         st.info("You don't have any past entries yet.. GoAhead journal one!!")
     st.markdown("---")
