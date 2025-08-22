@@ -532,28 +532,34 @@ def show_home_page():
     st.markdown("---")
     #Calendar View
     st.subheader("Your Calendar")
-    entry_dates = get_entry_dates (st.session_state.user_id)
-    if entry_dates:
-        entry_dates_dt = [datetime.date.fromisoformat(d) for d in entry_dates]
-        today = datetime.date.today()
-        first_day = today.replace(day=1)
-        days_in_month = (today.replace(month=today.month % 12 + 1, day=1) - datetime.timedelta(days=1)).day
-        st.markdown ('<div class="calendar">', unsafe_allow_html = True)
-        weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-        for day_name in weekdays:
-            st.markdown(f'<div class = "day-name">{day_name}</div>', unsafe_allow_html = True)
-        start_weekday = first_day.weekday()
-        for _ in range(start_weekday):
-            st.markdown('<div class="calendar-day"> </div>', unsafe_allow_html = True)
-        for day in range(1, days_in_month + 1):
-            current_date = first_day.replace(day=day)
-            if current_date in entry_dates_dt:
-                st.markdown(f'<div class = "calendar-day journaled-day"> {day} </div>', unsafe_allow_html = True)
+    entry_dates = get_entry_dates(st.session_state.user_id)
+    entry_dates_dt = [datetime.date.fromisoformat(d) for d in entry_dates]
+    today = datetime.date.today()
+    first_day = today.replace(day=1)
+    days_in_month = (today.replace(month=today.month % 12 + 1, day=1) - datetime.timedelta(days=1)).day
+    weekdays = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]
+    cols = st.columns(7)
+    for i, day_name in enumerate(weekdays):
+        cols[i].markdown(f"**{day_name}**")
+    calendar_days = []
+    start_weekday = first_day.weekday()  # Monday=0
+    for _ in range(start_weekday):
+        calendar_days.append("")
+    for day in range(1, days_in_month + 1):
+        current_date = first_day.replace(day=day)
+        if current_date in entry_dates_dt:
+            calendar_days.append(f"📝 {day}")  # Highlight journaled day 
+        else:
+            calendar_days.append(str(day))
+    for i in range(0, len(calendar_days), 7):
+        week = calendar_days[i:i+7]
+        cols = st.columns(7)
+        for j, day in enumerate(week):
+            if "📝" in day:
+                cols[j].markdown(f"<span style='color:#FFD700; font-weight:bold;'>{day}</span>", unsafe_allow_html=True)
             else:
-                st.markdown(f'<div class = "calendar-day"> {day} </div>', unsafe_allow_html = True)
-        st.markdown('</div>', unsafe_allow_html = True)
-    else:
-        st.info("Start writing to see your calendar history!!")
+                cols[j].markdown(day)
+
     st.markdown("---")
     #Previous entries list with delete option
     st.subheader("Previous Entries")
